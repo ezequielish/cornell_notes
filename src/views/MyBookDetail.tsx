@@ -11,7 +11,7 @@ import CarruselList from "../components/Carrusel/CarruselList.tsx";
 import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel.tsx";
 import BookInfo from "../components/Books/BookInfo.tsx";
 import Modal from "../components/Modal/Modal.tsx";
-
+import BtnFavorite from "../components/BtnFavorite/BtnFavorite.tsx";
 const STORAGE_KEY = "library_books";
 const NOTES_KEY = "book_notes";
 
@@ -90,6 +90,26 @@ const MyBookDetail = () => {
       console.error("Libro no encontrado");
     }
   };
+
+  const handleFavorite = async (editedBook: any, isFavorite: boolean) => {
+    const _books: Book[] = getAllBooks();
+
+    // 1. Buscamos el índice del libro que queremos editar usando su ID
+    const index = _books.findIndex((b) => b.id === editedBook.id);
+
+    if (index !== -1) {
+      // 2. Si existe, lo reemplazamos en esa posición exacta
+      _books[index] = { ...editedBook, favorite: isFavorite };
+
+      // 3. Guardamos el array actualizado en localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(_books));
+
+      setBook(editedBook);
+      setBooks(_books); // Actualizamos el estado local
+    } else {
+      console.error("Libro no encontrado");
+    }
+  };
   const handleDelete = (idToDelete: number | string) => {
     const _books: Book[] = getAllBooks();
 
@@ -141,7 +161,10 @@ const MyBookDetail = () => {
   return (
     <>
       <div className={styles.container}>
-        <button className={`${mainStyles.button} ${styles.backBtn} `} onClick={goBack}>
+        <button
+          className={`${mainStyles.button} ${styles.backBtn} `}
+          onClick={goBack}
+        >
           <BackIcon />
         </button>
         <div className={styles.header}>
@@ -178,7 +201,14 @@ const MyBookDetail = () => {
             />
           </div>
           <div className={styles.info}>
-            <h1 className={styles.title}>{book.title}</h1>
+            <div className={"flex"}>
+              <h1 className={styles.title}>{book.title} </h1>
+              <BtnFavorite
+                initialStatus={book.favorite ?? false}
+                item={book}
+                onToggle={handleFavorite}
+              />
+            </div>
             <p className={styles.metadata}>
               {book.author} | {book.year}
             </p>

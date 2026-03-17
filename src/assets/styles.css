@@ -153,3 +153,9 @@ main {
     margin-left: 280px;
   }
 }
+
+.flex {
+  display: flex;
+  gap: 0.5rem;
+  position: relative;
+}

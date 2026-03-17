@@ -1,0 +1,57 @@
+.btn {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  position: absolute;
+  right: -60px;
+  top: -15px;
+  transition:
+    transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    background-color 0.3s ease;
+  background-color: #f0f0f0;
+}
+
+.btn:hover {
+  background-color: #e2e2e2;
+  transform: scale(1.05);
+}
+
+/* Estado cuando está en TRUE */
+.active {
+  background-color: #ffe5e5;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+  animation: pulso 0.4s ease-out;
+}
+
+.emoji {
+  display: inline-block;
+  line-height: 1;
+}
+
+.active span {
+  filter: drop-shadow(0 0 5px rgba(255, 0, 0, 0.3));
+}
+
+@keyframes pulso {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.3);
+  }
+  100% {
+    transform: scale(1.1);
+  }
+}
