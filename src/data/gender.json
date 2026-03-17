@@ -1,0 +1,20 @@
+{
+  "genres": [
+    { "id": 1, "label": "Ficción" },
+    { "id": 2, "label": "No Ficción" },
+    { "id": 3, "label": "Ciencia Ficción" },
+    { "id": 4, "label": "Fantasía" },
+    { "id": 5, "label": "Misterio y Thriller" },
+    { "id": 6, "label": "Historia" },
+    { "id": 7, "label": "Biografía y Memorias" },
+    { "id": 8, "label": "Desarrollo Personal" },
+    { "id": 9, "label": "Poesía" },
+    { "id": 10, "label": "Ensayo" },
+    { "id": 11, "label": "Romance" },
+    { "id": 12, "label": "Terror / Horror" },
+    { "id": 13, "label": "Ciencia y Tecnología" },
+    { "id": 14, "label": "Religión y Espiritualidad" },
+    { "id": 15, "label": "Filosofía" },
+    { "id": 16, "label": "Otro" }
+  ]
+}

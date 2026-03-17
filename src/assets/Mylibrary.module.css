@@ -1,0 +1,21 @@
+.wrapper {
+  margin-top: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 2rem;
+  padding: 3rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4rem;
+}
+
+/* Solo mostrar botones en pantallas grandes */
+@media (min-width: 768px) {
+  .header {
+    margin-top: 0;
+  }
+}

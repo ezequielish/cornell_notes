@@ -1,0 +1,12 @@
+.wrapperCarrusel {
+  margin-top: 3.5rem;
+  position: relative;
+  position: relative;
+  width: 73vw;
+  max-width: 100%;
+}
+
+.carruselTitle {
+  font-size: 1.5rem;
+  font-weight: 500;
+}

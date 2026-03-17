@@ -1,0 +1,147 @@
+.cornellContainer {
+  font-family: Arial, sans-serif;
+  /* max-width: 900px;  */
+  margin: 20px auto;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden; /* Para que las esquinas redondeadas funcionen con el header */
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.cornellContainer h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  border-bottom: 2px solid #f3f4f6;
+  padding: 12px;
+}
+.actionsWrapper {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: end;
+  gap: 8px;
+}
+
+/* --- Encabezado --- */
+.header {
+  display: flex;
+  background-color: #f3f4f6;
+  border-bottom: 1px solid #d1d5db;
+  padding: 10px 15px;
+  gap: 10px;
+}
+
+.field {
+  flex: 1;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.label {
+  font-weight: bold;
+  color: #1f2937;
+}
+
+/* --- Área Principal (Grid) --- */
+.mainArea {
+  display: grid;
+  grid-template-columns: 1fr; /* Proporción para palabras clave y notas */
+  border-bottom: 1px solid #d1d5db;
+}
+
+@media (min-width: 640px) {
+  .mainArea {
+    display: grid;
+    grid-template-columns: 2fr 5fr; /* Proporción para palabras clave y notas */
+    border-bottom: 1px solid #d1d5db;
+  }
+}
+
+.keywordsSection {
+  background-color: #f3f4f6;
+  border-right: 1px solid #d1d5db;
+}
+
+.keywordsSection ul li {
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.notesSection {
+  background-color: #ffffff;
+}
+
+/* --- Sección de Resumen --- */
+.summarySection {
+  background-color: #f3f4f6;
+}
+
+/* --- Estilos de Título y Contenido Comunes --- */
+.keywordsTitle,
+.notesTitle,
+.summaryTitle {
+  margin: 0;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: #1f2937;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.keywordsTitle {
+  background-color: #e0f2fe; /* Azul claro */
+}
+
+.notesTitle {
+  background-color: #f3e8ff; /* Morado claro */
+}
+
+.summaryTitle {
+  background-color: #fef9c3; /* Amarillo claro */
+}
+
+.contentList {
+  list-style: none;
+  padding: 15px;
+  margin: 0;
+}
+
+.contentList li {
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.summaryText {
+  padding: 15px;
+  margin: 0;
+  font-size: 0.9rem;
+  color: #374151;
+  line-height: 1.6;
+}
+
+.deleteWrapper {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.deleteWrapper p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+/* Acciones */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+}

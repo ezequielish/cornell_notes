@@ -1,0 +1,154 @@
+.button {
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #374151;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.button:hover {
+  background-color: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.btnPrimary {
+  background-color: #007bff; /* Un azul vibrante que resalte sobre el fondo blanco */
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  color: #ffffff;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btnPrimary:hover {
+  background-color: #0056b3; /* Un azul más oscuro al pasar el ratón */
+  transform: translateY(-1px); /* Efecto de que se levanta al tocarlo */
+}
+
+.btnPrimary:active {
+  transform: translateY(0);
+}
+
+.btnCancel {
+  background-color: #f3f4f6; /* Gris muy claro, no compite con el botón principal */
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #d1d5db; /* Borde sutil para dar estructura */
+  color: #374151; /* Texto oscuro para legibilidad */
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btnCancel:hover {
+  background-color: #e5e7eb; /* Gris un poco más oscuro */
+  border-color: #9ca3af;
+  transform: translateY(-1px);
+}
+
+.btnCancel:active {
+  transform: translateY(0);
+  background-color: #d1d5db;
+}
+
+.btnDelete {
+  background-color: #ef4444; /* Rojo semáforo/alerta */
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #dc2626;
+  color: #ffffff;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.btnDelete:hover {
+  background-color: #dc2626; /* Un tono más oscuro al pasar el ratón */
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.btnDelete:active {
+  transform: translateY(0);
+  background-color: #b91c1c;
+}
+
+.btnGuardar {
+  background-color: #111827;
+  color: white;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnGuardar:hover {
+  background-color: #000000;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #96c7e8;
+  font-style: oblique;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.input label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #4b5563;
+}
+
+.input input,
+.input select,
+.input textarea {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  background-color: #ffffff;
+}
+
+.input input:focus,
+.input select:focus,
+.input textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Estado de Error */
+.inputError {
+  border-color: #ef4444 !important;
+}
+
+.inputError:focus {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+.errorText {
+  color: #ef4444;
+  font-size: 0.75rem;
+  font-weight: 500;
+}

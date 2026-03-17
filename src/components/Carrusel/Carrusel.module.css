@@ -1,0 +1,66 @@
+.carruselList {
+  display: flex; /* Alinea los hijos horizontalmente */
+  gap: 20px; /* Espacio entre libros */
+  overflow-x: auto; /* Permite el scroll horizontal */
+  padding: 20px 0;
+  /* Esto oculta la barra de scroll pero deja funcionar el scroll */
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.carruselList a {
+  text-decoration: none;
+}
+
+.carruselList:active {
+  cursor: grabbing; /* Muestra el puño al hacer clic */
+}
+.carruselList::-webkit-scrollbar {
+  display: none; /* Ocultar scroll en Chrome/Safari */
+}
+
+.carruselItem {
+  min-width: 150px; /* Tamaño fijo para que no se compriman */
+  max-width: 150px;
+  flex-shrink: 0; /* Evita que los libros se encojan */
+  transition: transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  color: black;
+  gap: 0.7rem;
+}
+.carruselItem img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 8px; /* Para esquinas redondeadas modernas */
+}
+
+.btnNav {
+  position: absolute;
+  top: 40%;
+  z-index: 10;
+  background: white;
+  border-radius: 50%;
+  cursor: pointer;
+  display: none; /* Oculto por defecto (móvil) */
+  width: 35px;
+  height: 35px;
+}
+
+/* Solo mostrar botones en pantallas grandes */
+@media (min-width: 1024px) {
+  .btnNav {
+    display: block;
+  }
+}
+
+.prev {
+  left: -20px;
+}
+.next {
+  right: -20px;
+}
