@@ -1,6 +1,6 @@
 import styles from "../assets/Mylibrary.module.css";
 import mainStyles from "../assets/main.module.css";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Modal from "../components/Modal/Modal.tsx";
 import { Book } from "../components/Books/types.ts";
 import BookForm from "../components/Books/BookForm.tsx";
@@ -8,7 +8,7 @@ import BookGrid from "../components/Books/BookGrid.tsx";
 
 const STORAGE_KEY = "library_books";
 
-const MyLibrary = ({}) => {
+const MyLibrary = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [books, setBooks] = useState<Book[]>([]);
 

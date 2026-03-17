@@ -1,8 +1,8 @@
-import styles from "./BookForm.module.css"; 
+import styles from "./BookForm.module.css";
 import mainStyles from "../../assets/main.module.css";
 import React, { useEffect, useState } from "react";
 import { useForm } from "../../hooks/useForm.ts";
-import { Book, BookFormProps, FormErrors } from "./types";
+import { Book, BookFormProps } from "./types";
 import data from "../../data/gender.json";
 const BookForm: React.FC<BookFormProps> = ({
   onSave,
@@ -27,8 +27,9 @@ const BookForm: React.FC<BookFormProps> = ({
     const errors: any = {};
     if (!values.title.trim()) errors.title = "El título es obligatorio";
     if (!values.author.trim()) errors.author = "El autor es obligatorio";
-    if (values.pages == 0) errors.pages = "El número de paginas es obligatorio";
-    if (values.gender == 0) errors.gender = "La categoria es obligatoria";
+    if (values.pages === 0)
+      errors.pages = "El número de paginas es obligatorio";
+    if (values.gender === 0) errors.gender = "La categoria es obligatoria";
 
     return errors;
   };
@@ -42,7 +43,7 @@ const BookForm: React.FC<BookFormProps> = ({
     if (edit && book) {
       setValues({ ...book });
     }
-  }, []);
+  }, [edit, book, setValues]);
 
   useEffect(() => {
     // Si el input está vacío, reseteamos

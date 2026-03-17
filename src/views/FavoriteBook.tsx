@@ -1,12 +1,12 @@
 import styles from "../assets/Mylibrary.module.css";
 import mainStyles from "../assets/main.module.css";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Book } from "../components/Books/types.ts";
 import BookGrid from "../components/Books/BookGrid.tsx";
 
 const STORAGE_KEY = "library_books";
 
-const FavoriteBook = ({}) => {
+const FavoriteBook = () => {
   const [books, setBooks] = useState<Book[]>([]);
 
   const getAllBooks = (): Book[] => {
@@ -19,7 +19,7 @@ const FavoriteBook = ({}) => {
     return [];
   };
 
-  // Cargar libros al iniciar
+  // Cargar libros al inicia
   useEffect(() => {
     const favorites = getAllBooks();
     if (favorites) setBooks(favorites);

@@ -1,7 +1,7 @@
 import styles from "../components/Books/BookDetail.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Book } from "../components/Books/types.ts";
 import { NoteCornell } from "../components/NotesCornell/types.ts";
 import BackIcon from "../components/Icons/Back.tsx";
@@ -19,29 +19,30 @@ const MyBookDetail = () => {
   // Extraemos el bookmId de la URL
   const { bookId } = useParams<{ bookId: string }>();
   const [book, setBook] = useState<Book | null>(null);
-  const [books, setBooks] = useState<Book[] | []>([]);
   const [booksNotes, setBooksNotes] = useState<NoteCornell[] | []>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [showModalAddNote, setShowModalAddNote] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
-  const getAllBooks = (): Book[] => {
+  const getAllBooks = useCallback((): Book[] => {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : [];
-  };
+  }, []);
 
-  const getAllBookNotesbyBookId = (): NoteCornell[] => {
+  const getAllBookNotesbyBookId = useCallback((): NoteCornell[] => {
     let data = localStorage.getItem(NOTES_KEY);
     const json = data ? JSON.parse(data) : [];
+
     if (json) {
+      // Aquí usamos bookId, por eso debe ir en las dependencias del useCallback
       const notes = json.filter(
         (note: NoteCornell) => note.bookId === Number(bookId),
       );
       return notes;
     }
     return [];
-  };
+  }, [bookId]); // Se recrea solo si cambia bookId
 
   const getAllBookNotes = (): NoteCornell[] => {
     let data = localStorage.getItem(NOTES_KEY);
@@ -49,27 +50,21 @@ const MyBookDetail = () => {
   };
 
   useEffect(() => {
-    //Obtenemos los libros de localStorage
-    const savedBooks = getAllBooks();
-
-    if (savedBooks && bookId) {
-      const booksList: Book[] = savedBooks;
+    if (bookId) {
       const _notes = getAllBookNotesbyBookId();
       setBooksNotes(_notes);
-      setBooks(booksList);
-      //  Buscamos el libro (convertimos el id de la URL a número)
-      const foundBook = booksList.find((b) => b.id === Number(bookId));
+    }
+  }, [bookId, getAllBookNotesbyBookId]); // Se ejecuta cada vez que el ID en la URL cambie
 
-      if (foundBook) {
-        setBook(foundBook);
+  useEffect(() => {
+    if (bookId) {
+      const _books = getAllBooks();
+      const _book = _books.find((b) => b.id === Number(bookId));
+      if (_book) {
+        setBook(_book);
       }
     }
-  }, [bookId]); // Se ejecuta cada vez que el ID en la URL cambie
-
-  if (!book) {
-    return <div className={"styles.error"}>Libro no encontrado</div>;
-  }
-
+  }, [bookId, getAllBooks]); // Se ejecuta cada vez que el ID en la URL cambie
   const handleEdit = async (editedBook: Book) => {
     const _books: Book[] = getAllBooks();
 
@@ -85,7 +80,6 @@ const MyBookDetail = () => {
 
       setIsEditing(false);
       setBook(editedBook);
-      setBooks(_books); // Actualizamos el estado local
     } else {
       console.error("Libro no encontrado");
     }
@@ -105,7 +99,6 @@ const MyBookDetail = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(_books));
 
       setBook(editedBook);
-      setBooks(_books); // Actualizamos el estado local
     } else {
       console.error("Libro no encontrado");
     }
@@ -116,9 +109,6 @@ const MyBookDetail = () => {
     const updatedBooks = _books.filter((book) => book.id !== idToDelete);
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedBooks));
-
-    setBooks(updatedBooks);
-
     navigate(`/mylibrary`);
   };
 
@@ -129,7 +119,7 @@ const MyBookDetail = () => {
     const newId =
       notes.length > 0 ? Math.max(...notes.map((b) => Number(b.id))) + 1 : 1;
 
-    if (book.id) {
+    if (book && book.id) {
       note.bookId = book.id;
     }
 
@@ -160,115 +150,124 @@ const MyBookDetail = () => {
 
   return (
     <>
-      <div className={styles.container}>
-        <button
-          className={`${mainStyles.button} ${styles.backBtn} `}
-          onClick={goBack}
-        >
-          <BackIcon />
-        </button>
-        <div className={styles.header}>
-          <div className={styles.actionsWrapper}>
+      {!book && <div className={"styles.error"}>Libro no encontrado</div>}
+      {book && (
+        <>
+          <div className={styles.container}>
             <button
-              className={mainStyles.btnPrimary}
-              onClick={() => setShowModalAddNote(true)}
+              className={`${mainStyles.button} ${styles.backBtn} `}
+              onClick={goBack}
             >
-              📖 Agregar Notas
+              <BackIcon />
             </button>
-            <button
-              className={mainStyles.button}
-              onClick={() => setIsEditing(!isEditing)}
-            >
-              ✏️ Editar Libro
-            </button>
-            <button
-              className={mainStyles.btnDelete}
-              onClick={() => setIsDeleting(!isDeleting)}
-            >
-              🗑️ Eliminar Libro
-            </button>
-          </div>
-        </div>
-        <div className={styles.wrapperHeader}>
-          <div className={styles.imageWrapper}>
-            <img
-              src={
-                book.frontPage ||
-                "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
-              }
-              alt={book.title}
-              className={styles.image}
-            />
-          </div>
-          <div className={styles.info}>
-            <div className={"flex"}>
-              <h1 className={styles.title}>{book.title} </h1>
-              <BtnFavorite
-                initialStatus={book.favorite ?? false}
-                item={book}
-                onToggle={handleFavorite}
-              />
+            <div className={styles.header}>
+              <div className={styles.actionsWrapper}>
+                <button
+                  className={mainStyles.btnPrimary}
+                  onClick={() => setShowModalAddNote(true)}
+                >
+                  📖 Agregar Notas
+                </button>
+                <button
+                  className={mainStyles.button}
+                  onClick={() => setIsEditing(!isEditing)}
+                >
+                  ✏️ Editar Libro
+                </button>
+                <button
+                  className={mainStyles.btnDelete}
+                  onClick={() => setIsDeleting(!isDeleting)}
+                >
+                  🗑️ Eliminar Libro
+                </button>
+              </div>
             </div>
-            <p className={styles.metadata}>
-              {book.author} | {book.year}
-            </p>
-          </div>
-        </div>
+            <div className={styles.wrapperHeader}>
+              <div className={styles.imageWrapper}>
+                <img
+                  src={
+                    book.frontPage ||
+                    "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
+                  }
+                  alt={book.title}
+                  className={styles.image}
+                />
+              </div>
+              <div className={styles.info}>
+                <div className={"flex"}>
+                  <h1 className={styles.title}>{book.title} </h1>
+                  <BtnFavorite
+                    initialStatus={book.favorite ?? false}
+                    item={book}
+                    onToggle={handleFavorite}
+                  />
+                </div>
+                <p className={styles.metadata}>
+                  {book.author} | {book.year}
+                </p>
+              </div>
+            </div>
 
-        <div className={styles.wrapper}>
-          {isEditing ? (
-            <BookForm
-              onSave={handleEdit}
-              onCancel={() => setIsEditing(false)}
-              edit={true}
-              book={book}
+            <div className={styles.wrapper}>
+              {isEditing ? (
+                <BookForm
+                  onSave={handleEdit}
+                  onCancel={() => setIsEditing(false)}
+                  edit={true}
+                  book={book}
+                />
+              ) : (
+                <BookInfo book={book} />
+              )}
+            </div>
+
+            <div className={styles.wrapper}>
+              <LayoutCarrusel title={`Notas de ${book.title}`}>
+                <CarruselList items={booksNotes} linkNavigate={`/mynote`} />
+              </LayoutCarrusel>
+            </div>
+            {/* Aquí vas puntuación y progreso */}
+          </div>
+          <Modal
+            isOpen={isDeleting}
+            onClose={() => setIsDeleting(false)}
+            title=""
+          >
+            <div className={styles.deleteWrapper}>
+              <p>🗑️ Deseas eliminar este Libro?</p>
+
+              <div className={styles.actions}>
+                <button
+                  type="button"
+                  onClick={() => setIsDeleting(false)}
+                  className={mainStyles.btnCancel}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDelete(book.id || 0)}
+                  className={mainStyles.btnDelete}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </Modal>
+
+          <Modal
+            isOpen={showModalAddNote}
+            onClose={() => setShowModalAddNote(false)}
+            title=""
+          >
+            <NotesCornellForm
+              onSave={handleAddNote}
+              onCancel={() => setShowModalAddNote(false)}
+              edit={false}
             />
-          ) : (
-            <BookInfo book={book} />
-          )}
-        </div>
-
-        <div className={styles.wrapper}>
-          <LayoutCarrusel title={`Notas de ${book.title}`}>
-            <CarruselList items={booksNotes} linkNavigate={`/mynote`} />
-          </LayoutCarrusel>
-        </div>
-        {/* Aquí vas puntuación y progreso */}
-      </div>
-      <Modal isOpen={isDeleting} onClose={() => setIsDeleting(false)} title="">
-        <div className={styles.deleteWrapper}>
-          <p>🗑️ Deseas eliminar este Libro?</p>
-
-          <div className={styles.actions}>
-            <button
-              type="button"
-              onClick={() => setIsDeleting(false)}
-              className={mainStyles.btnCancel}
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDelete(book.id || 0)}
-              className={mainStyles.btnDelete}
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        isOpen={showModalAddNote}
-        onClose={() => setShowModalAddNote(false)}
-        title=""
-      >
-        <NotesCornellForm
-          onSave={handleAddNote}
-          onCancel={() => setShowModalAddNote(false)}
-          edit={false}
-        />
-      </Modal>
+          </Modal>
+        </>
+      )}
     </>
   );
 };

@@ -1,16 +1,18 @@
-import styles from "./BookForm.module.css"; 
+import styles from "./BookForm.module.css";
 import mainStyles from "../../assets/main.module.css";
 import { useState, useEffect } from "react";
 import data from "../../data/gender.json";
-import { Book, BookFormProps, FormErrors } from "./types";
+import { Book } from "./types";
 
 const BookInfo = ({ book }: { book: Book }) => {
   const [category, setCategory] = useState<string>("");
 
   useEffect(() => {
-    const _category = data.genres.find((c: any) => c.id == book?.gender);
+    const _category = data.genres.find(
+      (c: any) => c.id === Number(book.gender),
+    );
     if (_category) setCategory(_category.label);
-  }, []); //
+  }, [book]); //
 
   return (
     <div className={styles.container}>
@@ -42,7 +44,7 @@ const BookInfo = ({ book }: { book: Book }) => {
           <div className={mainStyles.input}>
             <label>Portada </label>
             <div className={styles.wrapperImg}>
-              <img src={book.frontPage} />
+              <img src={book.frontPage} alt={book.title} />
             </div>
           </div>
         </div>

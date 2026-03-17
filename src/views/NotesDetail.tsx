@@ -1,7 +1,7 @@
 import styles from "../assets/NotesDetail.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { NoteCornell } from "../components/NotesCornell/types.ts";
 import BackIcon from "../components/Icons/Back.tsx";
 import NotesCornellForm from "../components/NotesCornell/NotesCornellForm.tsx";
@@ -32,15 +32,18 @@ const NotesDetail = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
-  const noteById = (id: string): NoteCornell => {
-    let data = localStorage.getItem(NOTES_KEY);
+  const noteById = useCallback((id: string, _note: NoteCornell): NoteCornell => {
+    const data = localStorage.getItem(NOTES_KEY);
     const json = data ? JSON.parse(data) : [];
+
     if (json) {
-      const notes = json.find((note: NoteCornell) => note.id === Number(id));
-      return notes;
+      const foundNote = json.find(
+        (note: NoteCornell) => note.id === Number(id),
+      );
+      return foundNote || _note;
     }
-    return initialNote;
-  };
+    return _note;
+  }, []);
 
   const getAllBookNotes = (): NoteCornell[] => {
     let data = localStorage.getItem(NOTES_KEY);
@@ -61,14 +64,15 @@ const NotesDetail = () => {
   };
   useEffect(() => {
     //Obtenemos las notas de localStorage
-    if (id) {
-      const _note = noteById(id);
+    if (id && note) {
+      const _note = noteById(id, note);
 
       if (_note) {
         setNote(_note);
       }
     }
-  }, [id]); // Se ejecuta cada vez que el ID en la URL cambie
+  }, [id, noteById]); // Se ejecuta cada vez que el ID en la URL cambie
+
 
   if (!note) {
     return <div className={"styles.error"}>Nota no encontrado</div>;

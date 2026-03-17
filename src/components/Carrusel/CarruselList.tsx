@@ -2,12 +2,12 @@ import { useRef, useState, useEffect } from "react";
 import styles from "./Carrusel.module.css";
 import { Link } from "react-router-dom";
 
-interface CarruselList {
+interface CarruselListProps {
   items: any[];
   linkNavigate?: string;
 }
 
-const CarruselList = ({ items, linkNavigate }: CarruselList) => {
+const CarruselList = ({ items, linkNavigate }: CarruselListProps) => {
   const scrollRef = useRef<HTMLUListElement>(null);
   const [showArrows, setShowArrows] = useState<boolean>(false);
 

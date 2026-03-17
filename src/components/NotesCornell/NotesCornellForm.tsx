@@ -1,6 +1,6 @@
 import styles from "./NotesCornellForm.module.css";
 import mainStyles from "../../assets/main.module.css";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "../../hooks/useForm.ts";
 import { NoteCornell, NoteCornellProps } from "./types.ts";
 const NotesCornellForm: React.FC<NoteCornellProps> = ({
@@ -59,7 +59,7 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
 
       setValues({ ...noteCornell });
     }
-  }, []);
+  }, [edit, noteCornell, setValues]);
 
   return (
     <div className={styles.container}>

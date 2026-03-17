@@ -1,10 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel.tsx";
 import CarruselList from "../components/Carrusel/CarruselList.tsx";
 import { Book } from "../components/Books/types.ts";
 const STORAGE_KEY = "library_books";
 
-const Home = ({}) => {
+const Home = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([]);
 
@@ -26,12 +26,12 @@ const Home = ({}) => {
   }, []);
   return (
     <>
-      <LayoutCarrusel title="Mis Libros">
-        <CarruselList items={books} />
+      <LayoutCarrusel title="📚 Mis Libros">
+        <CarruselList items={books} linkNavigate="/mybook" />
       </LayoutCarrusel>
 
-      <LayoutCarrusel title="Mis Libros Favoritos">
-        <CarruselList items={favoriteBooks} />
+      <LayoutCarrusel title="❤️ Mis Libros Favoritos">
+        <CarruselList items={favoriteBooks} linkNavigate="/mybook" />
       </LayoutCarrusel>
     </>
   );
