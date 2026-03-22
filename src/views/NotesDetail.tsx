@@ -32,18 +32,21 @@ const NotesDetail = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
 
-  const noteById = useCallback((id: string, _note: NoteCornell): NoteCornell => {
-    const data = localStorage.getItem(NOTES_KEY);
-    const json = data ? JSON.parse(data) : [];
+  const noteById = useCallback(
+    (id: string, _note: NoteCornell): NoteCornell => {
+      const data = localStorage.getItem(NOTES_KEY);
+      const json = data ? JSON.parse(data) : [];
 
-    if (json) {
-      const foundNote = json.find(
-        (note: NoteCornell) => note.id === Number(id),
-      );
-      return foundNote || _note;
-    }
-    return _note;
-  }, []);
+      if (json) {
+        const foundNote = json.find(
+          (note: NoteCornell) => note.id === Number(id),
+        );
+        return foundNote || _note;
+      }
+      return _note;
+    },
+    [],
+  );
 
   const getAllBookNotes = (): NoteCornell[] => {
     let data = localStorage.getItem(NOTES_KEY);
@@ -64,15 +67,14 @@ const NotesDetail = () => {
   };
   useEffect(() => {
     //Obtenemos las notas de localStorage
-    if (id && note) {
+    if (id && note.id === "") {
       const _note = noteById(id, note);
 
       if (_note) {
         setNote(_note);
       }
     }
-  }, [id, noteById]); // Se ejecuta cada vez que el ID en la URL cambie
-
+  }, [id, note, noteById]); // Se ejecuta cada vez que el ID en la URL cambie
 
   if (!note) {
     return <div className={"styles.error"}>Nota no encontrado</div>;
