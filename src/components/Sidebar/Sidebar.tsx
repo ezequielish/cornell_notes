@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "./Sidebar.module.css";
-import { ROUTES, RouteItem } from "../../routes.config.ts";
+import { ROUTES, RouteItem } from "../../routes.config";
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

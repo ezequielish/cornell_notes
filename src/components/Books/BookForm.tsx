@@ -1,7 +1,7 @@
 import styles from "./BookForm.module.css";
 import mainStyles from "../../assets/main.module.css";
 import React, { useEffect, useState } from "react";
-import { useForm } from "../../hooks/useForm.ts";
+import { useForm } from "../../hooks/useForm";
 import { Book, BookFormProps } from "./types";
 import data from "../../data/gender.json";
 const BookForm: React.FC<BookFormProps> = ({

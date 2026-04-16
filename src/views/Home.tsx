@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel.tsx";
-import CarruselList from "../components/Carrusel/CarruselList.tsx";
-import { Book } from "../components/Books/types.ts";
+import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel";
+import CarruselList from "../components/Carrusel/CarruselList";
+import { Book } from "../components/Books/types";
 const STORAGE_KEY = "library_books";
 
 const Home = () => {

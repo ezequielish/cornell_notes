@@ -1,8 +1,8 @@
 import styles from "./NotesCornellForm.module.css";
 import mainStyles from "../../assets/main.module.css";
 import React, { useEffect } from "react";
-import { useForm } from "../../hooks/useForm.ts";
-import { NoteCornell, NoteCornellProps } from "./types.ts";
+import { useForm } from "../../hooks/useForm";
+import { NoteCornell, NoteCornellProps } from "./types";
 const NotesCornellForm: React.FC<NoteCornellProps> = ({
   onSave,
   onCancel,

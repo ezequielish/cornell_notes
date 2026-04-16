@@ -2,10 +2,10 @@ import styles from "../assets/NotesDetail.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { NoteCornell } from "../components/NotesCornell/types.ts";
-import BackIcon from "../components/Icons/Back.tsx";
-import NotesCornellForm from "../components/NotesCornell/NotesCornellForm.tsx";
-import Modal from "../components/Modal/Modal.tsx";
+import { NoteCornell } from "../components/NotesCornell/types";
+import BackIcon from "../components/Icons/Back";
+import NotesCornellForm from "../components/NotesCornell/NotesCornellForm";
+import Modal from "../components/Modal/Modal";
 
 const NOTES_KEY = "book_notes";
 

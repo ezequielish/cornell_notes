@@ -1,8 +1,8 @@
 import styles from "../assets/Mylibrary.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useState, useEffect } from "react";
-import { Book } from "../components/Books/types.ts";
-import BookGrid from "../components/Books/BookGrid.tsx";
+import { Book } from "../components/Books/types";
+import BookGrid from "../components/Books/BookGrid";
 
 const STORAGE_KEY = "library_books";
 

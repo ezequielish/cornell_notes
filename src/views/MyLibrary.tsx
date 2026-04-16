@@ -1,10 +1,10 @@
 import styles from "../assets/Mylibrary.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useState, useEffect } from "react";
-import Modal from "../components/Modal/Modal.tsx";
-import { Book } from "../components/Books/types.ts";
-import BookForm from "../components/Books/BookForm.tsx";
-import BookGrid from "../components/Books/BookGrid.tsx";
+import Modal from "../components/Modal/Modal";
+import { Book } from "../components/Books/types";
+import BookForm from "../components/Books/BookForm";
+import BookGrid from "../components/Books/BookGrid";
 
 const STORAGE_KEY = "library_books";
 
