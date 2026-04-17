@@ -143,14 +143,13 @@ body {
 
 /* Hace que el main tome todo el espacio restante a la derecha */
 main {
-  padding: 20px;
+  padding: 35px;
   width: 100%;
 }
 
 /* Solo mostrar botones en pantallas grandes */
 @media (min-width: 1300px) {
   main {
-    padding: 20px;
     margin-left: 270px;
   }
 }
