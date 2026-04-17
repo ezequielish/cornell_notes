@@ -26,6 +26,7 @@ const Login = (): ReactElement => {
   const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const { user, login } = useAuth();
   const navigate = useNavigate();
 
@@ -86,16 +87,23 @@ const Login = (): ReactElement => {
             placeholder="Correo electrónico"
             required
             className={mainStyles.input}
+            name="email"
+            autoComplete="username"
           />
         </div>
-        <div className={mainStyles.input}>
+        <div className={mainStyles.input} style={{ position: "relative" }}>
+          <button onClick={() => setShowPassword(!showPassword)} type="button" className={styles.showPassword}>
+            <span>{showPassword ? "🙉" : "🙈"}</span>
+          </button>
           <input
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={password}
             onChange={onPasswordChange}
             placeholder="Contraseña"
             required
             className={mainStyles.input}
+            autoComplete="current-password"
+            name="password"
           />
         </div>
 
