@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ReactElement } from "react";
+import { useState, ReactElement } from "react";
 import { useForm } from "../hooks/useForm";
 import mainStyles from "../assets/main.module.css";
 import Spinner from "../components/Spinner";
