@@ -11,6 +11,7 @@ import Home from "./views/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Login from "./components/Login/Login";
 import Spinner from "./components/Spinner";
+import SignUp from "./views/SignUp";
 function App() {
   const { user, loading } = useAuth();
 
@@ -28,6 +29,7 @@ function App() {
       <main>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
           <Route element={<ProtectedRoute isAuthenticated={!!user} />}>
             <Route path="/" element={<Home />} />
             <Route path="/favorites" element={<FavoriteBook />} />

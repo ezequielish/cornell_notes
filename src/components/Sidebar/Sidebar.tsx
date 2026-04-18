@@ -1,11 +1,29 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styles from "./Sidebar.module.css";
+import mainStyles from "../../assets/main.module.css";
+import { useAuth } from "../../AuthContext";
 import { ROUTES, RouteItem } from "../../routes.config";
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
+  const signOut = async () => {
+    const response = await fetch(`${apiUrl}/api/auth/sign-out`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      logout();
+      navigate("/login");
+    }
+  };
   return (
     <>
       {/* Botón Hamburguesa */}
@@ -18,8 +36,9 @@ const Sidebar: React.FC = () => {
       </button>
 
       <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
-        <div className={styles.header}>Notas Cornell</div>
         <nav>
+          <div className={styles.header}>Notas Cornell</div>
+
           {(ROUTES as RouteItem[]).map((item) => (
             <NavLink
               key={item.path}
@@ -34,6 +53,12 @@ const Sidebar: React.FC = () => {
             </NavLink>
           ))}
         </nav>
+
+        <div className={styles.footer}>
+          <button onClick={signOut} className={mainStyles.btnCancel}>
+            Cerrar Sesión
+          </button>
+        </div>
       </aside>
 
       {/* Overlay opcional para cerrar el menú al hacer click fuera */}
