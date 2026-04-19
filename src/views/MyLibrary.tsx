@@ -49,7 +49,7 @@ const MyLibrary = () => {
       const data: Response = await response.json();
 
       if (!data.success) {
-        const _error =
+        const _error: any =
           data.errors &&
           data.errors.map((err: any) => {
             return {
@@ -58,7 +58,7 @@ const MyLibrary = () => {
             };
           });
 
-        throw _error;
+        throw new Error(JSON.stringify(_error));
       }
       const _newBook = data.data as Book;
       setIsModalOpen(false);
@@ -66,7 +66,11 @@ const MyLibrary = () => {
       setBooks(updatedBooks);
     } catch (error) {
       console.error("Error saving book:", error);
-      setError(error as object[]);
+      setError(
+        error instanceof Error
+          ? JSON.parse(error.message)
+          : [{ message: "Error desconocido" }],
+      );
     } finally {
       setIsLoadingBook(false);
     }
@@ -84,18 +88,37 @@ const MyLibrary = () => {
         if (response.ok) {
           const data: Response = await response.json();
 
+          if (!data.success) {
+            console.error("Error fetching books:", response.statusText);
+            const _error: any =
+              data.errors &&
+              data.errors.map((err: any) => {
+                return {
+                  field: err.field,
+                  message: err.message,
+                };
+              });
+
+            throw new Error(JSON.stringify(_error));
+          }
           setBooks(data?.data as Book[]);
         } else {
           console.error("Error fetching books:", response.statusText);
-          throw [
-            {
-              message: "Error al cargar los libros",
-            },
-          ];
+          throw new Error(
+            JSON.stringify([
+              {
+                message: "Error al cargar los libros",
+              },
+            ]),
+          );
         }
       } catch (error) {
         console.error("Error fetching books:", error);
-        setError(error as object[]);
+        setError(
+          error instanceof Error
+            ? JSON.parse(error.message)
+            : [{ message: "Error desconocido" }],
+        );
       } finally {
         setIsLoading(false);
       }

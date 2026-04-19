@@ -17,7 +17,7 @@ interface Response {
 const FavoriteBook = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<object[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBooks() {
@@ -38,15 +38,12 @@ const FavoriteBook = () => {
           setBooks(data?.data as Book[]);
         } else {
           console.error("Error fetching books:", response.statusText);
-          throw [
-            {
-              message: "Error al cargar los libros",
-            },
-          ];
+          throw new Error("Error al cargar los libros favoritos");
         }
-      } catch (error) {
+      } catch (error: any) {
         console.error("Error fetching books:", error);
-        setError(error as object[]);
+        debugger;
+        setError(error.message as string);
       } finally {
         setIsLoading(false);
       }
@@ -67,7 +64,7 @@ const FavoriteBook = () => {
             </div>
           ) : books.length > 0 ? (
             <BookGrid books={books} />
-          ) : error && error.length > 0  ? (
+          ) : error ? (
             <p
               style={{
                 color: "red",
@@ -77,15 +74,12 @@ const FavoriteBook = () => {
                 gap: "10px",
               }}
             >
-              {error.map((err: any, index: number) => (
-                <span key={index}>
-                  {err.field && err.field} - {err.message}
-                </span>
-              ))}
+              {error}
             </p>
           ) : books.length === 0 ? (
             <p style={{ textAlign: "center" }}>
-              No tienes libros favoritos aún. Agrega algunos desde tu biblioteca.
+              No tienes libros favoritos aún. Agrega algunos desde tu
+              biblioteca.
             </p>
           ) : null}
         </div>

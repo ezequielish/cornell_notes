@@ -7,8 +7,8 @@ import { NoteCornell } from "../components/NotesCornell/types";
 import BackIcon from "../components/Icons/Back";
 import BookForm from "../components/Books/BookForm";
 import NotesCornellForm from "../components/NotesCornell/NotesCornellForm";
-import CarruselList from "../components/Carrusel/CarruselList";
-import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel";
+// import CarruselList from "../components/Carrusel/CarruselList";
+// import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel";
 import BookInfo from "../components/Books/BookInfo";
 import Modal from "../components/Modal/Modal";
 import BtnFavorite from "../components/BtnFavorite/BtnFavorite";
@@ -47,7 +47,7 @@ const MyBookDetail = () => {
           const data = await response.json();
 
           if (!data.success) {
-            const _error =
+            const _error: any =
               data.errors &&
               data.errors.map((err: any) => {
                 return {
@@ -56,7 +56,7 @@ const MyBookDetail = () => {
                 };
               });
 
-            throw _error;
+            throw new Error(_error);
           }
           setBook(data.data);
         } catch (error) {
@@ -91,7 +91,7 @@ const MyBookDetail = () => {
       const data: Response = await response.json();
 
       if (!data.success) {
-        const _error =
+        const _error: any =
           data.errors &&
           data.errors.map((err: any) => {
             return {
@@ -100,7 +100,7 @@ const MyBookDetail = () => {
             };
           });
 
-        throw _error;
+        throw new Error(_error);
       }
       const _newBook = data.data as Book;
       setBook(_newBook);
@@ -130,7 +130,7 @@ const MyBookDetail = () => {
       const data: Response = await response.json();
 
       if (!data.success) {
-        const _error =
+        const _error: any =
           data.errors &&
           data.errors.map((err: any) => {
             return {
@@ -139,13 +139,17 @@ const MyBookDetail = () => {
             };
           });
 
-        throw _error;
+        throw new Error(_error);
       }
       const _newBook = data.data as Book;
       setBook(_newBook);
     } catch (error) {
       console.error("Error saving book:", error);
-      setError(error as object[]);
+      setError(
+        error instanceof Error
+          ? JSON.parse(error.message)
+          : [{ message: "Error desconocido" }],
+      );
     } finally {
       setIsLoadingBook(false);
     }
@@ -161,7 +165,7 @@ const MyBookDetail = () => {
       const data = await response.json();
 
       if (!data.success) {
-        const _error =
+        const _error: any =
           data.errors &&
           data.errors.map((err: any) => {
             return {
@@ -170,12 +174,16 @@ const MyBookDetail = () => {
             };
           });
 
-        throw _error;
+        throw new Error(_error);
       }
       navigate("/mylibrary");
     } catch (error) {
       console.error("Error deleting book:", error);
-      setError(error as object[]);
+      setError(
+        error instanceof Error
+          ? JSON.parse(error.message)
+          : [{ message: "Error desconocido" }],
+      );
     } finally {
       setIsLoadingBook(false);
     }
