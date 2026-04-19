@@ -1,7 +1,7 @@
 import styles from "../components/Books/BookDetail.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { Book } from "../components/Books/types";
 import { NoteCornell } from "../components/NotesCornell/types";
 import BackIcon from "../components/Icons/Back";
@@ -25,7 +25,7 @@ const MyBookDetail = () => {
   // Extraemos el bookmId de la URL
   const { bookId } = useParams<{ bookId: string }>();
   const [book, setBook] = useState<Book | null>(null);
-  const [booksNotes, setBooksNotes] = useState<NoteCornell[] | []>([]);
+  // const [booksNotes, setBooksNotes] = useState<NoteCornell[] | []>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [showModalAddNote, setShowModalAddNote] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -311,9 +311,9 @@ const MyBookDetail = () => {
             </div>
 
             <div className={styles.wrapper}>
-              <LayoutCarrusel title={`Notas de ${book.title}`}>
+              {/* <LayoutCarrusel title={`Notas de ${book.title}`}>
                 <CarruselList items={booksNotes} linkNavigate={`/mynote`} />
-              </LayoutCarrusel>
+              </LayoutCarrusel> */}
             </div>
             {/* Aquí vas puntuación y progreso */}
           </div>
