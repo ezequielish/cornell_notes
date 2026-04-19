@@ -37,6 +37,7 @@
     box-shadow 0.3s ease;
   border: 1px solid #e5e7eb;
   cursor: pointer;
+  height: 100%;
 }
 
 .card:hover {

@@ -49,12 +49,10 @@ const Login = (): ReactElement => {
       const data: AuthResponse = await response.json();
 
       if (response.ok && data.token) {
-        setLoading(false);
         login(data.user);
         navigate("/");
       } else {
         setError("Credenciales incorrectas");
-        setLoading(false);
       }
     } catch (error) {
       console.error("Error en la petición:", error);

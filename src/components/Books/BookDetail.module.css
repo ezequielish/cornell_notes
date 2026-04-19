@@ -11,6 +11,9 @@
 
 .backBtn {
   margin-top: 2rem;
+  display: flex;
+  justify-content: start;
+  align-items: center;
 }
 
 .wrapperHeader {
@@ -74,3 +77,14 @@
   border-top: 1px solid #f3f4f6;
 }
 
+@media (min-width: 1024px) {
+  .backBtn {
+    margin-top: 0;
+  }
+  .wrapperHeader {
+    margin-top: 0;
+  }
+  .actionsWrapper {
+    margin-top: 0;
+  }
+}

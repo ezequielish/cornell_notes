@@ -3,12 +3,15 @@ import mainStyles from "../../assets/main.module.css";
 import React, { useEffect, useState } from "react";
 import { useForm } from "../../hooks/useForm";
 import { Book, BookFormProps } from "./types";
+import Spinner from "../../components/Spinner";
+
 import data from "../../data/gender.json";
 const BookForm: React.FC<BookFormProps> = ({
   onSave,
   onCancel,
   book,
   edit = false,
+  loading = false,
 }) => {
   const [isValid, setIsValid] = useState<boolean>(false);
 
@@ -22,7 +25,7 @@ const BookForm: React.FC<BookFormProps> = ({
     description: "",
   };
 
-  // 1. Definimos la validación aquí mismo (o se puede importar de un archivo aparte)
+  // Definimos la validación aquí mismo (o se puede importar de un archivo aparte)
   const validateBookForm = (values: Book) => {
     const errors: any = {};
     if (!values.title.trim()) errors.title = "El título es obligatorio";
@@ -105,7 +108,7 @@ const BookForm: React.FC<BookFormProps> = ({
             <div className={mainStyles.input}>
               <label>Año</label>
               <input
-                type="text"
+                type="number"
                 name="year"
                 className={errors.year ? mainStyles.inputError : ""}
                 value={values.year}
@@ -185,9 +188,13 @@ const BookForm: React.FC<BookFormProps> = ({
           >
             Cancelar
           </button>
-          <button type="submit" className={mainStyles.btnGuardar}>
-            Guardar
-          </button>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <button type="submit" className={mainStyles.btnGuardar}>
+              Guardar
+            </button>
+          )}
         </div>
       </form>
     </div>

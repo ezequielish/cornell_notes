@@ -41,8 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(data.user);
         localStorage.setItem("user_profile", JSON.stringify(data.user));
       } catch {
-        setUser(null);
-        localStorage.removeItem("user_profile");
+    
       } finally {
         setLoading(false);
       }

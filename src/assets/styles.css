@@ -143,7 +143,7 @@ body {
 
 /* Hace que el main tome todo el espacio restante a la derecha */
 main {
-  padding: 35px;
+  padding: 15px;
   width: 100%;
 }
 

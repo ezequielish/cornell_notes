@@ -16,6 +16,6 @@
 /* Solo mostrar botones en pantallas grandes */
 @media (min-width: 1024px) {
   .header {
-    margin-top: 0;
+    margin-top: 1.5rem;
   }
 }

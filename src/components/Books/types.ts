@@ -15,6 +15,7 @@ export interface BookFormProps {
   onCancel?: () => void;
   edit?: boolean;
   book?: Book;
+  loading?: boolean;
 }
 
 // Interfaz para los errores
