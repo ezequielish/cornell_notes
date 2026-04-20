@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/v1/:path*",
+      "destination": "https://cornell-notes-backend.vercel.app/api/v1/:path*"
+    },
+    {
+      "source": "/api/auth/:path*",
+      "destination": "https://cornell-notes-backend.vercel.app/api/auth/:path*"
+    }
+  ]
+}
