@@ -58,7 +58,7 @@ const CarruselList = ({ items, linkNavigate }: CarruselListProps) => {
                 <li className={styles.carruselItem} >
                   <img src={item.frontPage} alt={item.title} />
                   <h3>{item.title}</h3>
-                  {item.date && <p>{item.date}</p>}
+                  {item.date && <p>{item.date.split("T")[0]}</p>}
                 </li>
               </Link>
             );
@@ -67,7 +67,7 @@ const CarruselList = ({ items, linkNavigate }: CarruselListProps) => {
             <li className={styles.carruselItem} key={item.id}>
               <img src={item.frontPage} alt={item.title} />
               <h3>{item.title}</h3>
-              {item.date && <p>{item.date}</p>}
+              {item.date && <p>{item.date.split("T")[0]}</p>}
             </li>
           );
         })}

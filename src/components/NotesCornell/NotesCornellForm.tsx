@@ -3,17 +3,19 @@ import mainStyles from "../../assets/main.module.css";
 import React, { useEffect } from "react";
 import { useForm } from "../../hooks/useForm";
 import { NoteCornell, NoteCornellProps } from "./types";
+import Spinner from "../../components/Spinner";
+
 const NotesCornellForm: React.FC<NoteCornellProps> = ({
   onSave,
   onCancel,
   noteCornell,
   edit = false,
+  loading = false,
 }) => {
   const initialState: NoteCornell = {
     title: "",
     bookId: "",
     date: "",
-    keywords: [],
     aiSummary: [],
     summary: [],
     images: [],
@@ -24,16 +26,17 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
     frontPage: "",
   };
 
-  // 1. Definimos la validación aquí mismo (o se puede importar de un archivo aparte)
+  const [keywords, setKeywords] = React.useState<string>("");
+  const [notes, setNotes] = React.useState<string>("");
+  const [errorNotes, setErrorNotes] = React.useState<string>("");
+
+  //  Definimos la validación aquí mismo (o se puede importar de un archivo aparte)
   const validateForm = (values: NoteCornell) => {
     const errors: any = {};
     if (!values.title.trim()) errors.title = "El título es obligatorio";
     if (!values.date.trim()) errors.date = "La fecha es obligatoria";
-    if (!values.keywords.length)
-      errors.keywords = "Las palabras claves son obligatorias";
     if (!values.notes.length) errors.notes = "Las notas son obligatorias";
-    if (!values.summary.length)
-      errors.summary = "Las palabras claves son obligatorias";
+    if (!values.summary.length) errors.summary = "El resumen es obligatorio";
 
     return errors;
   };
@@ -45,14 +48,6 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
   // Efecto para cargar datos si estamos editando
   useEffect(() => {
     if (edit && noteCornell) {
-      if (typeof noteCornell.keywords != "string") {
-        noteCornell.keywords = noteCornell.keywords.join("\n");
-      }
-
-      if (typeof noteCornell.notes != "string") {
-        noteCornell.notes = noteCornell.notes.join("\n");
-      }
-
       if (typeof noteCornell.summary != "string") {
         noteCornell.summary = noteCornell.summary.join("\n");
       }
@@ -60,6 +55,25 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
       setValues({ ...noteCornell });
     }
   }, [edit, noteCornell, setValues]);
+
+  const addNote = (event: React.FormEvent) => {
+    event.preventDefault();
+
+    if (!keywords.trim() || !notes.trim()) {
+      return setErrorNotes("Las notas son obligatorias");
+    }
+    const newNote = {
+      title: keywords,
+      notes: notes.split("\n"),
+    };
+
+    const updatedNotes: any = [...values.notes, newNote];
+    values.notes = updatedNotes;
+
+    setErrorNotes("");
+    setKeywords("");
+    setNotes("");
+  };
 
   return (
     <div className={styles.container}>
@@ -152,38 +166,60 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
           </div>
         </div>
         <div className={styles.formGrid}>
-          <div className={mainStyles.input}>
-            <label>Palabras Claves *</label>
-            <textarea
-              name="keywords"
-              rows={6}
-              style={{ resize: "none" }}
-              className={errors.keywords ? mainStyles.inputError : ""}
-              value={values.keywords}
-              onChange={handleChange}
-              placeholder="- Palabras clave separadas por salto de linea"
-              autoComplete="off"
-            />
-            {errors.keywords && (
-              <span className={mainStyles.errorText}>{errors.keywords}</span>
-            )}
-          </div>
+          <div>
+            <div className={mainStyles.input}>
+              <label>Palabra Clave *</label>
+              <input
+                name="keywords"
+                placeholder="Palabras clave"
+                autoComplete="off"
+                value={keywords}
+                onChange={(e) => setKeywords(e.target.value)}
+              />
+            </div>
 
-          <div className={mainStyles.input}>
-            <label>Notas *</label>
-            <textarea
-              name="notes"
-              rows={6}
-              style={{ resize: "none" }}
-              className={errors.keywords ? mainStyles.inputError : ""}
-              value={values.notes}
-              onChange={handleChange}
-              placeholder="- Párrafos separados por salto de linea"
-              autoComplete="off"
-            />
-            {errors.notes && (
-              <span className={mainStyles.errorText}>{errors.notes}</span>
-            )}
+            <div className={mainStyles.input}>
+              <label>Notas *</label>
+              <textarea
+                name="notes"
+                rows={6}
+                style={{ resize: "none" }}
+                className={errors.notes ? mainStyles.inputError : ""}
+                placeholder="- Párrafos asociado a la palabra, separados por salto de linea"
+                autoComplete="off"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+              {errors.notes ? (
+                <span className={mainStyles.errorText}>{errors.notes}</span>
+              ) : errorNotes.length ? (
+                <span className={mainStyles.errorText}>{errorNotes}</span>
+              ) : (
+                ""
+              )}
+            </div>
+            <button
+              className={mainStyles.button}
+              style={{ margin: "-1rem 0 1rem 0" }}
+              type="button"
+              onClick={addNote}
+            >
+              AGREGAR ➕
+            </button>
+          </div>
+          <div className={styles.notesWrapper}>
+            <p>Notas agregadas</p>
+            <ul>
+              {values.notes.length > 0 &&
+                values.notes.map((note: any, index: number) => (
+                  <li
+                    key={index}
+                    className={`${mainStyles.badge} ${mainStyles.success}`}
+                  >
+                    <strong>{note.title}</strong>&nbsp;❌
+                  </li>
+                ))}
+            </ul>
           </div>
         </div>
         <div>
@@ -193,7 +229,7 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
               name="summary"
               rows={6}
               style={{ resize: "none" }}
-              className={errors.keywords ? mainStyles.inputError : ""}
+              className={errors.summary ? mainStyles.inputError : ""}
               value={values.summary}
               onChange={handleChange}
               placeholder="- Párrafos separados por salto de linea"
@@ -212,9 +248,13 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
           >
             Cancelar
           </button>
-          <button type="submit" className={mainStyles.btnGuardar}>
-            Guardar
-          </button>
+          {loading ? (
+            <Spinner />
+          ) : (
+            <button type="submit" className={mainStyles.btnGuardar}>
+              Guardar
+            </button>
+          )}
         </div>
       </form>
     </div>

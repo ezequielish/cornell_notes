@@ -68,5 +68,23 @@
   position: fixed;
   bottom: 37px;
   right: 54px;
+  display: flex;
+  gap: 12px;
 }
 
+.notesWrapper {
+  height: 80%;
+  overflow-y: scroll;
+}
+
+.notesWrapper p {
+  font-weight: 600;
+}
+
+.notesWrapper ul {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}

@@ -1,10 +1,14 @@
+interface Notes {
+  title: string;
+  notes: string[] | string;
+}
+
 export interface NoteCornell {
   id?: string | number;
   title: string;
   date: string;
   bookId: string | number;
-  keywords: string[] | string;
-  notes: string[] | string;
+  notes: Notes[] | [];
   aiSummary: string[] | string;
   summary: string[] | string;
   images: string[];
@@ -19,4 +23,5 @@ export interface NoteCornellProps {
   onCancel?: () => void;
   edit?: boolean;
   noteCornell?: NoteCornell;
+  loading?: boolean;
 }

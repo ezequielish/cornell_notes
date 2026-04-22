@@ -6,6 +6,7 @@ import { Book } from "../components/Books/types";
 import BookForm from "../components/Books/BookForm";
 import BookGrid from "../components/Books/BookGrid";
 import Spinner from "../components/Spinner";
+import { json } from "node:stream/consumers";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -66,6 +67,18 @@ const MyLibrary = () => {
       setBooks(updatedBooks);
     } catch (error) {
       console.error("Error saving book:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+          setBooks([]);
+          return;
+        }
+      }
       setError(
         error instanceof Error
           ? JSON.parse(error.message)
@@ -102,18 +115,21 @@ const MyLibrary = () => {
             throw new Error(JSON.stringify(_error));
           }
           setBooks(data?.data as Book[]);
-        } else {
-          console.error("Error fetching books:", response.statusText);
-          throw new Error(
-            JSON.stringify([
-              {
-                message: "Error al cargar los libros",
-              },
-            ]),
-          );
         }
       } catch (error) {
         console.error("Error fetching books:", error);
+        if (error instanceof Error) {
+          if (error.message === "Failed to fetch") {
+            setError([
+              {
+                message:
+                  "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+              },
+            ]);
+            setBooks([]);
+            return;
+          }
+        }
         setError(
           error instanceof Error
             ? JSON.parse(error.message)

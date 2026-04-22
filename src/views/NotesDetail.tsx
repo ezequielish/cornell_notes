@@ -16,7 +16,6 @@ const NotesDetail = () => {
     title: "",
     date: "",
     bookId: "",
-    keywords: [],
     notes: [],
     aiSummary: [],
     summary: [],
@@ -55,12 +54,9 @@ const NotesDetail = () => {
 
   const handleCancel = () => {
     setIsEditing(false);
-    if (typeof note.keywords == "string") {
-      note.keywords = note.keywords.split("\n").filter(Boolean);
-    }
-    if (typeof note.notes == "string") {
-      note.notes = note.notes.split("\n").filter(Boolean);
-    }
+    // if (typeof note.notes == "string") {
+    //   // note.notes = note.notes.split("\n").filter(Boolean);
+    // }
     if (typeof note.summary == "string") {
       note.summary = note.summary.split("\n").filter(Boolean);
     }
@@ -86,12 +82,9 @@ const NotesDetail = () => {
     const index = _notes.findIndex((b) => b.id === editNote.id);
 
     if (index !== -1) {
-      if (typeof editNote.keywords == "string") {
-        editNote.keywords = editNote.keywords.split("\n").filter(Boolean);
-      }
-      if (typeof editNote.notes == "string") {
-        editNote.notes = editNote.notes.split("\n").filter(Boolean);
-      }
+      // if (typeof editNote.notes == "string") {
+      //   editNote.notes = editNote.notes.split("\n").filter(Boolean);
+      // }
       if (typeof editNote.summary == "string") {
         editNote.summary = editNote.summary.split("\n").filter(Boolean);
       }
@@ -154,7 +147,7 @@ const NotesDetail = () => {
 
           <div className={styles.mainArea}>
             {/* Sección de Palabras Clave (Columna Izquierda) */}
-            <section className={styles.keywordsSection}>
+            {/* <section className={styles.keywordsSection}>
               <h3 className={styles.keywordsTitle}>Palabras Clave</h3>
               <ul className={styles.contentList}>
                 {typeof note.keywords != "string" &&
@@ -162,7 +155,7 @@ const NotesDetail = () => {
                     <li key={index}>{keyword}</li>
                   ))}
               </ul>
-            </section>
+            </section> */}
 
             {/* Sección de Notas Principales (Columna Derecha) */}
             <section className={styles.notesSection}>

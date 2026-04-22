@@ -7,8 +7,8 @@ import { NoteCornell } from "../components/NotesCornell/types";
 import BackIcon from "../components/Icons/Back";
 import BookForm from "../components/Books/BookForm";
 import NotesCornellForm from "../components/NotesCornell/NotesCornellForm";
-// import CarruselList from "../components/Carrusel/CarruselList";
-// import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel";
+import CarruselList from "../components/Carrusel/CarruselList";
+import LayoutCarrusel from "../components/Carrusel/LayoutCarrusel";
 import BookInfo from "../components/Books/BookInfo";
 import Modal from "../components/Modal/Modal";
 import BtnFavorite from "../components/BtnFavorite/BtnFavorite";
@@ -17,21 +17,23 @@ import Spinner from "../components/Spinner";
 const apiUrl = process.env.REACT_APP_API_URL;
 interface Response {
   success: boolean;
-  data: Book | Book[];
+  data: Book | Book[] | NoteCornell | NoteCornell[];
   message?: string;
   errors?: object[] | "";
 }
+
 const MyBookDetail = () => {
   // Extraemos el bookmId de la URL
   const { bookId } = useParams<{ bookId: string }>();
   const [book, setBook] = useState<Book | null>(null);
-  // const [booksNotes, setBooksNotes] = useState<NoteCornell[] | []>([]);
+  const [booksNotes, setBooksNotes] = useState<NoteCornell[] | []>([]);
   const [isEditing, setIsEditing] = useState(false);
   const [showModalAddNote, setShowModalAddNote] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<object[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingBook, setIsLoadingBook] = useState(false);
+  const [isLoadingNotes, setIsLoadingNotes] = useState(false);
 
   const navigate = useNavigate();
 
@@ -43,7 +45,6 @@ const MyBookDetail = () => {
           const response = await fetch(`${apiUrl}/api/v1/books/${bookId}`, {
             credentials: "include",
           });
-
           const data = await response.json();
 
           if (!data.success) {
@@ -67,7 +68,42 @@ const MyBookDetail = () => {
         }
       }
     }
+    async function fetchNotesBook() {
+      if (bookId) {
+        setIsLoading(true);
+        const params: any = {
+          bookId
+        };
+        const queryParams = new URLSearchParams(params).toString();
+        try {
+          const response = await fetch(`${apiUrl}/api/v1/notes?${queryParams}`, {
+            credentials: "include",
+          });
+          const data = await response.json();
+
+          if (!data.success) {
+            const _error: any =
+              data.errors &&
+              data.errors.map((err: any) => {
+                return {
+                  field: err.field,
+                  message: err.message,
+                };
+              });
+
+            throw new Error(_error);
+          }
+          setBooksNotes(data.data);
+        } catch (error) {
+          console.error("Error fetching book:", error);
+          setError(error as object[]);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    }
     fetchBook();
+    fetchNotesBook();
   }, [bookId]); // Se ejecuta cada vez que el ID en la URL cambie
   const handleEdit = async (editedBook: Book) => {
     setIsLoadingBook(true);
@@ -107,6 +143,18 @@ const MyBookDetail = () => {
       setIsEditing(false);
     } catch (error) {
       console.error("Error saving book:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+
+          return;
+        }
+      }
       setError(error as object[]);
     } finally {
       setIsLoadingBook(false);
@@ -145,6 +193,18 @@ const MyBookDetail = () => {
       setBook(_newBook);
     } catch (error) {
       console.error("Error saving book:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+
+          return;
+        }
+      }
       setError(
         error instanceof Error
           ? JSON.parse(error.message)
@@ -179,6 +239,18 @@ const MyBookDetail = () => {
       navigate("/mylibrary");
     } catch (error) {
       console.error("Error deleting book:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+
+          return;
+        }
+      }
       setError(
         error instanceof Error
           ? JSON.parse(error.message)
@@ -189,32 +261,71 @@ const MyBookDetail = () => {
     }
   };
 
-  const handleAddNote = (note: NoteCornell) => {
-    // const notes: NoteCornell[] = getAllBookNotes();
-    // // Calcula el nuevo ID basado en el máximo existente + 1
-    // const newId =
-    //   notes.length > 0 ? Math.max(...notes.map((b) => Number(b.id))) + 1 : 1;
-    // if (book && book.id) {
-    //   note.bookId = book.id;
-    // }
-    // if (typeof note.keywords == "string") {
-    //   note.keywords = note.keywords.split("\n").filter(Boolean);
-    // }
-    // if (typeof note.notes == "string") {
-    //   note.notes = note.notes.split("\n").filter(Boolean);
-    // }
-    // if (typeof note.summary == "string") {
-    //   note.summary = note.summary.split("\n").filter(Boolean);
-    // }
-    // if (note.frontPage === "") {
-    //   note.frontPage =
-    //     "https://img.freepik.com/vector-gratis/linda-mascota-sobre-papel-azul_24877-82735.jpg?semt=ais_user_personalization&w=740&q=80";
-    // }
-    // notes.push({ ...note, id: newId });
-    // localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
-    // setShowModalAddNote(false);
-    // const updatedBookNotes = getAllBookNotesbyBookId();
-    // setBooksNotes(updatedBookNotes);
+  const handleAddNote = async (note: NoteCornell) => {
+    if (note.frontPage === "") {
+      note.frontPage =
+        "https://img.freepik.com/vector-gratis/linda-mascota-sobre-papel-azul_24877-82735.jpg?semt=ais_user_personalization&w=740&q=80";
+    }
+    setIsLoadingNotes(true);
+    const body = {
+      ...note,
+      pageStart: Number(note.startPage),
+      pageEnd: Number(note.endPage),
+      bookId: bookId,
+      date: new Date(note.date),
+    };
+    delete body.startPage;
+    delete body.endPage;
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/notes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(body),
+      });
+
+      const data: Response = await response.json();
+
+      if (!data.success) {
+        const _error: any =
+          data.errors &&
+          data.errors.map((err: any) => {
+            return {
+              field: err.field,
+              message: err.message,
+            };
+          });
+
+        throw new Error(JSON.stringify(_error));
+      }
+      const _newBookNote = data.data as NoteCornell;
+      const updatedBookNote = [...booksNotes, _newBookNote];
+      setBooksNotes(updatedBookNote);
+    } catch (error) {
+      console.error("Error saving note:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+          setBooksNotes([]);
+          return;
+        }
+      }
+      setError(
+        error instanceof Error
+          ? JSON.parse(error.message)
+          : [{ message: "Error desconocido" }],
+      );
+    } finally {
+      setIsLoadingNotes(false);
+      setShowModalAddNote(false);
+    }
   };
   const goBack = () => {
     navigate(-1);
@@ -319,9 +430,9 @@ const MyBookDetail = () => {
             </div>
 
             <div className={styles.wrapper}>
-              {/* <LayoutCarrusel title={`Notas de ${book.title}`}>
+              <LayoutCarrusel title={`Notas de ${book.title}`}>
                 <CarruselList items={booksNotes} linkNavigate={`/mynote`} />
-              </LayoutCarrusel> */}
+              </LayoutCarrusel>
             </div>
             {/* Aquí vas puntuación y progreso */}
           </div>
@@ -365,7 +476,25 @@ const MyBookDetail = () => {
               onSave={handleAddNote}
               onCancel={() => setShowModalAddNote(false)}
               edit={false}
+              loading={isLoadingNotes}
             />
+            {error && error.length > 0 && showModalAddNote ? (
+              <p
+                style={{
+                  color: "red",
+                  textAlign: "center",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                }}
+              >
+                {error.map((err: any, index: number) => (
+                  <span key={index}>
+                    {err.field} - {err.message}
+                  </span>
+                ))}
+              </p>
+            ) : null}
           </Modal>
         </>
       )}

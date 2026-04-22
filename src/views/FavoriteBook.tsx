@@ -42,7 +42,6 @@ const FavoriteBook = () => {
         }
       } catch (error: any) {
         console.error("Error fetching books:", error);
-        debugger;
         setError(error.message as string);
       } finally {
         setIsLoading(false);
