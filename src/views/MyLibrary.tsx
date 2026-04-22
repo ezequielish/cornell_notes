@@ -6,7 +6,6 @@ import { Book } from "../components/Books/types";
 import BookForm from "../components/Books/BookForm";
 import BookGrid from "../components/Books/BookGrid";
 import Spinner from "../components/Spinner";
-import { json } from "node:stream/consumers";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
