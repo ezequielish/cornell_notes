@@ -5,14 +5,19 @@ import styles from "./Sidebar.module.css";
 import mainStyles from "../../assets/main.module.css";
 import { useAuth } from "../../AuthContext";
 import { ROUTES, RouteItem } from "../../routes.config";
+import Spinner from "../../components/Spinner";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Sidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { logout } = useAuth();
   const navigate = useNavigate();
 
   const signOut = async () => {
+    setIsLoading(true);
     const response = await fetch(`${apiUrl}/api/auth/sign-out`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -23,6 +28,8 @@ const Sidebar: React.FC = () => {
       logout();
       navigate("/login");
     }
+
+    setIsLoading(false);
   };
   return (
     <>
@@ -55,9 +62,13 @@ const Sidebar: React.FC = () => {
         </nav>
 
         <div className={styles.footer}>
-          <button onClick={signOut} className={mainStyles.btnCancel}>
-            Cerrar Sesión
-          </button>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <button onClick={signOut} className={mainStyles.btnCancel}>
+              Cerrar Sesión
+            </button>
+          )}
         </div>
       </aside>
 

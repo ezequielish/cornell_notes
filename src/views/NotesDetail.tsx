@@ -1,13 +1,20 @@
 import styles from "../assets/NotesDetail.module.css";
 import mainStyles from "../assets/main.module.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { NoteCornell } from "../components/NotesCornell/types";
 import BackIcon from "../components/Icons/Back";
 import NotesCornellForm from "../components/NotesCornell/NotesCornellForm";
 import Modal from "../components/Modal/Modal";
+import Spinner from "../components/Spinner";
 
-const NOTES_KEY = "book_notes";
+const apiUrl = process.env.REACT_APP_API_URL;
+interface Response {
+  success: boolean;
+  data: NoteCornell;
+  message?: string;
+  errors?: object[] | "";
+}
 
 const NotesDetail = () => {
   // Extraemos el bookmId de la URL
@@ -29,79 +36,165 @@ const NotesDetail = () => {
   const [note, setNote] = useState<NoteCornell>(initialNote);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<object[] | null>(null);
   const navigate = useNavigate();
-
-  const noteById = useCallback(
-    (id: string, _note: NoteCornell): NoteCornell => {
-      const data = localStorage.getItem(NOTES_KEY);
-      const json = data ? JSON.parse(data) : [];
-
-      if (json) {
-        const foundNote = json.find(
-          (note: NoteCornell) => note.id === Number(id),
-        );
-        return foundNote || _note;
-      }
-      return _note;
-    },
-    [],
-  );
-
-  const getAllBookNotes = (): NoteCornell[] => {
-    let data = localStorage.getItem(NOTES_KEY);
-    return data ? JSON.parse(data) : [];
-  };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // if (typeof note.notes == "string") {
-    //   // note.notes = note.notes.split("\n").filter(Boolean);
-    // }
-    if (typeof note.summary == "string") {
-      note.summary = note.summary.split("\n").filter(Boolean);
-    }
   };
   useEffect(() => {
-    //Obtenemos las notas de localStorage
-    if (id && note.id === "") {
-      const _note = noteById(id, note);
+    async function fetchNote() {
+      if (id) {
+        setLoading(true);
+        try {
+          const response = await fetch(`${apiUrl}/api/v1/notes/${id}`, {
+            credentials: "include",
+          });
+          const data = await response.json();
 
-      if (_note) {
-        setNote(_note);
+          if (!data.success) {
+            const _error: any =
+              data.errors &&
+              data.errors.map((err: any) => {
+                return {
+                  field: err.field,
+                  message: err.message,
+                };
+              });
+
+            throw new Error(_error);
+          }
+          setNote(data.data);
+        } catch (error) {
+          console.error("Error fetching note:", error);
+          setError(error as object[]);
+        } finally {
+          setLoading(false);
+        }
       }
     }
-  }, [id, note, noteById]); // Se ejecuta cada vez que el ID en la URL cambie
+
+    fetchNote();
+  }, [id]); // Se ejecuta cada vez que el ID en la URL cambie
 
   if (!note) {
     return <div className={"styles.error"}>Nota no encontrado</div>;
   }
 
   const handleEdit = async (editNote: NoteCornell) => {
-    const _notes: NoteCornell[] = getAllBookNotes();
+    if (editNote.frontPage === "") {
+      editNote.frontPage =
+        "https://st.depositphotos.com/3062907/5093/v/450/depositphotos_50938719-stock-illustration-lined-note-paper-sheet.jpg";
+    }
+    setError(null);
+    setLoading(true);
 
-    const index = _notes.findIndex((b) => b.id === editNote.id);
+    const body = {
+      ...editNote,
+      pageStart: Number(note.startPage),
+      pageEnd: Number(note.endPage),
+      bookId: note.bookId,
+      date: new Date(note.date),
+    };
+    delete body.startPage;
+    delete body.endPage;
+    try {
+      const response = await fetch(`${apiUrl}/api/v1/notes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(body),
+      });
 
-    if (index !== -1) {
-      // if (typeof editNote.notes == "string") {
-      //   editNote.notes = editNote.notes.split("\n").filter(Boolean);
-      // }
-      if (typeof editNote.summary == "string") {
-        editNote.summary = editNote.summary.split("\n").filter(Boolean);
+      const data: Response = await response.json();
+
+      if (!data.success) {
+        const _error: any =
+          data.errors &&
+          data.errors.map((err: any) => {
+            return {
+              field: err.field,
+              message: err.message,
+            };
+          });
+
+        throw new Error(JSON.stringify(_error));
       }
-      _notes[index] = { ...editNote };
-      localStorage.setItem(NOTES_KEY, JSON.stringify(_notes));
+      const _note = data.data as NoteCornell;
+      setNote(_note);
+    } catch (error) {
+      console.error("Error saving note:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch" || "Failed to get session") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+          return;
+        }
+      }
+      setError(
+        error instanceof Error
+          ? JSON.parse(error.message)
+          : [{ message: "Error desconocido" }],
+      );
+    } finally {
       setIsEditing(false);
-      setNote(editNote);
-    } else {
-      console.error("Nota no encontrada");
+      setLoading(false);
     }
   };
-  const handleDelete = (idToDelete: number | string) => {
-    const _notes: NoteCornell[] = getAllBookNotes();
-    const updatedNote = _notes.filter((note) => note.id !== idToDelete);
-    localStorage.setItem(NOTES_KEY, JSON.stringify(updatedNote));
+  const handleDelete = async (idToDelete: number | string) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch(`${apiUrl}/api/v1/notes/${idToDelete}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
 
-    navigate(`/mybook/${note.bookId}`);
+      const data = await response.json();
+
+      if (!data.success) {
+        const _error: any =
+          data.errors &&
+          data.errors.map((err: any) => {
+            return {
+              field: err.field,
+              message: err.message,
+            };
+          });
+
+        throw new Error(_error);
+      }
+      setIsDeleting(false);
+      navigate(`/mybook/${note.bookId}`);
+    } catch (error) {
+      console.error("Error deleting book:", error);
+      if (error instanceof Error) {
+        if (error.message === "Failed to fetch") {
+          setError([
+            {
+              message:
+                "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
+            },
+          ]);
+
+          return;
+        }
+      }
+      setError(
+        error instanceof Error
+          ? JSON.parse(error.message)
+          : [{ message: "Error desconocido" }],
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const goBack = () => {
@@ -114,12 +207,6 @@ const NotesDetail = () => {
         <BackIcon />
       </button>
       <div className={styles.actionsWrapper}>
-        {/* <button
-          className={mainStyles.btnPrimary}
-          onClick={() => setShowModalAddNote(true)}
-        >
-          📖 Agregar Notas
-        </button> */}
         <button
           className={mainStyles.button}
           onClick={() => setIsEditing(true)}
@@ -129,66 +216,92 @@ const NotesDetail = () => {
         <button
           className={mainStyles.btnDelete}
           onClick={() => setIsDeleting(!isDeleting)}
+          disabled={isDeleting}
         >
           🗑️ Eliminar nota
         </button>
       </div>
-      {!isEditing && (
-        <div className={styles.cornellContainer}>
-          <h1>{note.title}</h1>
-          <header className={styles.header}>
-            <div className={styles.field}>
-              <span className={styles.label}>Fecha:</span> {note.date}
-            </div>
-            <div className={styles.field}>
-              <span className={styles.label}>Tema:</span> {note.theme}
-            </div>
-          </header>
 
-          <div className={styles.mainArea}>
-            {/* Sección de Palabras Clave (Columna Izquierda) */}
-            {/* <section className={styles.keywordsSection}>
-              <h3 className={styles.keywordsTitle}>Palabras Clave</h3>
-              <ul className={styles.contentList}>
-                {typeof note.keywords != "string" &&
-                  note.keywords.map((keyword: any, index: number) => (
-                    <li key={index}>{keyword}</li>
-                  ))}
-              </ul>
-            </section> */}
-
-            {/* Sección de Notas Principales (Columna Derecha) */}
-            <section className={styles.notesSection}>
-              <h3 className={styles.notesTitle}>Notas Principales</h3>
-              <ul className={styles.contentList}>
-                {typeof note.notes != "string" &&
-                  note.notes.map((note: any, index: number) => (
-                    <li key={index}>● {note}</li>
-                  ))}
-              </ul>
-            </section>
-          </div>
-
-          {/* Sección de Resumen (Fila Inferior) */}
-          <footer className={styles.summarySection}>
-            <h3 className={styles.summaryTitle}>Resumen</h3>
-            <ul className={styles.contentList}>
-              {typeof note.summary != "string" &&
-                note.summary.map((summary: any, index: number) => (
-                  <li key={index}>{summary}</li>
-                ))}
-            </ul>
-          </footer>
+      {loading ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <Spinner />
         </div>
-      )}
+      ) : (
+        <>
+          {error && error.length > 0 ? (
+            <p
+              style={{
+                color: "red",
+                textAlign: "center",
+                display: "flex",
+                flexDirection: "column",
+                gap: "10px",
+              }}
+            >
+              {error.map((err: any, index: number) => (
+                <span key={index}>
+                  {err.field} - {err.message}
+                </span>
+              ))}
+            </p>
+          ) : null}
+          {!isEditing && (
+            <div className={styles.cornellContainer}>
+              <h1>{note.title}</h1>
+              <header className={styles.header}>
+                <div className={styles.field}>
+                  <span className={styles.label}>Fecha:</span>{" "}
+                  {note.date.split("T")[0]}
+                </div>
+                <div className={styles.field}>
+                  <span className={styles.label}>Tema:</span> {note.theme}
+                </div>
+              </header>
 
-      {note.id && isEditing && (
-        <NotesCornellForm
-          onSave={handleEdit}
-          onCancel={handleCancel}
-          edit={true}
-          noteCornell={note}
-        />
+              <div className={styles.mainArea}>
+                {note.notes.length === 0 && (
+                  <p>No hay notas o resumen disponible.</p>
+                )}
+                {/* Sección de Palabras Clave (Columna Izquierda) */}
+                <section className={styles.keywordsSection}>
+                  <h3 className={styles.keywordsTitle}>Palabras Clave</h3>
+                  <ul className={styles.contentList}>
+                    {note.notes.map((keyword: any, index: number) => (
+                      <li key={index}>● {keyword.title}</li>
+                    ))}
+                  </ul>
+                </section>
+
+                {/* Sección de Notas Principales (Columna Derecha) */}
+                <section className={styles.notesSection}>
+                  <h3 className={styles.notesTitle}>Notas Principales</h3>
+                  <ul className={styles.contentList}>
+                    {note.notes.map((note: any, index: number) =>
+                      note.notes.map((content: any, contentIndex: number) => (
+                        <li key={`${index}-${contentIndex}`}>- {content}</li>
+                      )),
+                    )}
+                  </ul>
+                </section>
+              </div>
+
+              {/* Sección de Resumen (Fila Inferior) */}
+              <footer className={styles.summarySection}>
+                <h3 className={styles.summaryTitle}>Resumen</h3>
+                <ul className={styles.contentList}>{note.summary}</ul>
+              </footer>
+            </div>
+          )}
+
+          {note.id && isEditing && (
+            <NotesCornellForm
+              onSave={handleEdit}
+              onCancel={handleCancel}
+              edit={true}
+              noteCornell={note}
+            />
+          )}
+        </>
       )}
 
       <Modal isOpen={isDeleting} onClose={() => setIsDeleting(false)} title="">

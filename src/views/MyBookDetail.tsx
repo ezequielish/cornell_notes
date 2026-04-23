@@ -72,13 +72,16 @@ const MyBookDetail = () => {
       if (bookId) {
         setIsLoading(true);
         const params: any = {
-          bookId
+          bookId,
         };
         const queryParams = new URLSearchParams(params).toString();
         try {
-          const response = await fetch(`${apiUrl}/api/v1/notes?${queryParams}`, {
-            credentials: "include",
-          });
+          const response = await fetch(
+            `${apiUrl}/api/v1/notes?${queryParams}`,
+            {
+              credentials: "include",
+            },
+          );
           const data = await response.json();
 
           if (!data.success) {
@@ -107,6 +110,7 @@ const MyBookDetail = () => {
   }, [bookId]); // Se ejecuta cada vez que el ID en la URL cambie
   const handleEdit = async (editedBook: Book) => {
     setIsLoadingBook(true);
+    setError(null);
     const body = {
       ...editedBook,
       year: Number(editedBook.year),
@@ -162,6 +166,7 @@ const MyBookDetail = () => {
   };
 
   const handleFavorite = async (editedBook: any, isFavorite: boolean) => {
+    setError(null);
     const body = {
       favorite: isFavorite,
     };
@@ -217,6 +222,7 @@ const MyBookDetail = () => {
   const handleDelete = async (idToDelete: string | number) => {
     try {
       setIsLoadingBook(true);
+      setError(null);
       const response = await fetch(`${apiUrl}/api/v1/books/${idToDelete}`, {
         method: "DELETE",
         credentials: "include",
@@ -264,9 +270,10 @@ const MyBookDetail = () => {
   const handleAddNote = async (note: NoteCornell) => {
     if (note.frontPage === "") {
       note.frontPage =
-        "https://img.freepik.com/vector-gratis/linda-mascota-sobre-papel-azul_24877-82735.jpg?semt=ais_user_personalization&w=740&q=80";
+        "https://st.depositphotos.com/3062907/5093/v/450/depositphotos_50938719-stock-illustration-lined-note-paper-sheet.jpg";
     }
     setIsLoadingNotes(true);
+    setError(null);
     const body = {
       ...note,
       pageStart: Number(note.startPage),
@@ -301,7 +308,7 @@ const MyBookDetail = () => {
         throw new Error(JSON.stringify(_error));
       }
       const _newBookNote = data.data as NoteCornell;
-      const updatedBookNote = [...booksNotes, _newBookNote];
+      const updatedBookNote = [_newBookNote, ...booksNotes];
       setBooksNotes(updatedBookNote);
     } catch (error) {
       console.error("Error saving note:", error);
@@ -328,7 +335,7 @@ const MyBookDetail = () => {
     }
   };
   const goBack = () => {
-    navigate(-1);
+    navigate("/mylibrary");
   };
 
   return (

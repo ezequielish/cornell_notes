@@ -25,6 +25,7 @@ const MyLibrary = () => {
 
   const handleSave = async (newBook: Book) => {
     setIsLoadingBook(true);
+    setError(null);
     if (newBook.frontPage === "") {
       newBook.frontPage =
         "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg";
@@ -62,7 +63,7 @@ const MyLibrary = () => {
       }
       const _newBook = data.data as Book;
       setIsModalOpen(false);
-      const updatedBooks = [...books, _newBook];
+      const updatedBooks = [_newBook, ...books];
       setBooks(updatedBooks);
     } catch (error) {
       console.error("Error saving book:", error);

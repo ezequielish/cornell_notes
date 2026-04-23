@@ -26,11 +26,6 @@
   gap: 20px;
 }
 
-@media (min-width: 640px) {
-  .formGrid {
-    grid-template-columns: 1fr 1fr; /* Dos columnas en pantallas medianas */
-  }
-}
 /* .header {
   grid-column: span 2;
   border-bottom: 2px solid #333;
@@ -73,7 +68,7 @@
 }
 
 .notesWrapper {
-  height: 80%;
+  height: 100%;
   overflow-y: scroll;
 }
 
@@ -82,9 +77,23 @@
 }
 
 .notesWrapper ul {
-  margin-top: 20px;
+  margin: 20px 0 20px 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
+}
+.notesWrapper button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+@media (min-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr; /* Dos columnas en pantallas medianas */
+  }
+  .notesWrapper {
+    max-height: 230px;
+  }
 }

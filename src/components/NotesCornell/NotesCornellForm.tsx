@@ -68,13 +68,25 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
     };
 
     const updatedNotes: any = [...values.notes, newNote];
-    values.notes = updatedNotes;
-
+    setValues((prev) => ({
+      ...prev,
+      notes: updatedNotes,
+    }));
     setErrorNotes("");
     setKeywords("");
     setNotes("");
   };
 
+  const removeNote = (event: React.FormEvent, index: number) => {
+    event.preventDefault();
+    const updatedNotes: any = [...values.notes];
+    updatedNotes.splice(index, 1);
+
+    setValues((prev) => ({
+      ...prev,
+      notes: updatedNotes,
+    }));
+  };
   return (
     <div className={styles.container}>
       {!edit && <h2>{"📖 Agregar nueva nota"}</h2>}
@@ -216,7 +228,8 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
                     key={index}
                     className={`${mainStyles.badge} ${mainStyles.success}`}
                   >
-                    <strong>{note.title}</strong>&nbsp;❌
+                    <strong>{note.title}</strong>&nbsp;
+                    <button onClick={(ev) => removeNote(ev, index)}>❌ </button>
                   </li>
                 ))}
             </ul>
