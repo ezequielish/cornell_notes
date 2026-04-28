@@ -8,6 +8,10 @@ export interface Book {
   year: string | number;
   description: string;
   favorite?: boolean;
+  progress?: {
+    currentProgress: number;
+    pagesRead: number;
+  };
 }
 
 export interface BookFormProps {

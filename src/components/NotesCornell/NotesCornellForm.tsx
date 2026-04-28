@@ -21,8 +21,8 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
     images: [],
     notes: [],
     theme: "",
-    startPage: 0,
-    endPage: 0,
+    pageStart: 0,
+    pageEnd: 0,
     frontPage: "",
   };
 
@@ -117,15 +117,15 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
             <label>N° de pag donde iniciaste</label>
             <input
               type="number"
-              name="startPage"
-              className={errors.startPage ? mainStyles.inputError : ""}
-              value={values.startPage}
+              name="pageStart"
+              className={errors.pageStart ? mainStyles.inputError : ""}
+              value={values.pageStart}
               onChange={handleChange}
               placeholder="1"
               autoComplete="off"
             />
-            {errors.startPage && (
-              <span className={mainStyles.errorText}>{errors.startPage}</span>
+            {errors.pageStart && (
+              <span className={mainStyles.errorText}>{errors.pageStart}</span>
             )}
           </div>
 
@@ -133,15 +133,15 @@ const NotesCornellForm: React.FC<NoteCornellProps> = ({
             <label>N° de pag donde quedaste</label>
             <input
               type="number"
-              name="endPage"
-              className={errors.endPage ? mainStyles.inputError : ""}
-              value={values.endPage}
+              name="pageEnd"
+              className={errors.pageEnd ? mainStyles.inputError : ""}
+              value={values.pageEnd}
               onChange={handleChange}
               placeholder="1"
               autoComplete="off"
             />
-            {errors.endPage && (
-              <span className={mainStyles.errorText}>{errors.endPage}</span>
+            {errors.pageEnd && (
+              <span className={mainStyles.errorText}>{errors.pageEnd}</span>
             )}
           </div>
         </div>

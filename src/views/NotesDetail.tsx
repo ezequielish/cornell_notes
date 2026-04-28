@@ -28,8 +28,8 @@ const NotesDetail = () => {
     summary: [],
     images: [],
     theme: "",
-    startPage: 0,
-    endPage: 0,
+    pageStart: 0,
+    pageEnd: 0,
     frontPage: "",
   };
   const { id } = useParams<{ id: string }>();
@@ -89,16 +89,14 @@ const NotesDetail = () => {
     }
     setError(null);
     setLoading(true);
-
     const body = {
       ...editNote,
-      pageStart: Number(note.startPage),
-      pageEnd: Number(note.endPage),
+      pageStart: Number(editNote.pageStart),
+      pageEnd: Number(editNote.pageEnd),
       bookId: note.bookId,
-      date: new Date(note.date),
+      date: new Date(editNote.date),
     };
-    delete body.startPage;
-    delete body.endPage;
+
     try {
       const response = await fetch(`${apiUrl}/api/v1/notes/${id}`, {
         method: "PUT",

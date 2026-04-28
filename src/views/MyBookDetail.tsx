@@ -13,6 +13,7 @@ import BookInfo from "../components/Books/BookInfo";
 import Modal from "../components/Modal/Modal";
 import BtnFavorite from "../components/BtnFavorite/BtnFavorite";
 import Spinner from "../components/Spinner";
+import ProgressBar from "../components/ProgressBar/ProgressBar";
 
 const apiUrl = process.env.REACT_APP_API_URL;
 interface Response {
@@ -276,13 +277,11 @@ const MyBookDetail = () => {
     setError(null);
     const body = {
       ...note,
-      pageStart: Number(note.startPage),
-      pageEnd: Number(note.endPage),
+      pageStart: Number(note.pageStart),
+      pageEnd: Number(note.pageEnd),
       bookId: bookId,
       date: new Date(note.date),
     };
-    delete body.startPage;
-    delete body.endPage;
     try {
       const response = await fetch(`${apiUrl}/api/v1/notes`, {
         method: "POST",
@@ -419,6 +418,14 @@ const MyBookDetail = () => {
                 <p className={styles.metadata}>
                   {book.author} | {book.year}
                 </p>
+
+                {book.progress && (
+                  <ProgressBar
+                    progress={book.progress.currentProgress}
+                    showPercentage={true}
+                    // color="#FF9800"
+                  />
+                )}
               </div>
             </div>
 

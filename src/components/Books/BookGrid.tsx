@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./BookGrid.module.css";
 import { Book } from "./types";
 import { Link } from "react-router-dom";
+import ProgressBar from "../ProgressBar/ProgressBar";
 interface BookGridProps {
   books: Book[];
 }
@@ -27,6 +28,14 @@ const BookGrid: React.FC<BookGridProps> = ({ books }) => {
                 <h3 className={styles.title}>{book.title}</h3>
                 <p>{book.author}</p>
                 {book.pages && <p>{book.pages} pag/módulos</p>}
+
+                {book.progress && (
+                  <ProgressBar
+                    progress={book.progress.currentProgress}
+                    showPercentage={true}
+                    // color="#FF9800"
+                  />
+                )}
               </div>
             </li>
           </Link>

@@ -13,9 +13,9 @@ export interface NoteCornell {
   summary: string[] | string;
   images: string[];
   theme?: string;
-  startPage?: number;
-  endPage?: number;
-  frontPage?: string;
+  pageStart: number;
+  pageEnd: number;
+  frontPage: string;
 }
 
 export interface NoteCornellProps {

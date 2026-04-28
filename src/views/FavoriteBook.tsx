@@ -9,7 +9,14 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 interface Response {
   success: boolean;
-  data: Book | Book[];
+  data: {
+    books: Book[];
+    stats: {
+      totalBooks: number;
+      completedBooks: number;
+      totalPagesRead: number;
+    };
+  };
   message?: string;
   errors?: object[] | "";
 }
@@ -35,7 +42,7 @@ const FavoriteBook = () => {
         if (response.ok) {
           const data: Response = await response.json();
 
-          setBooks(data?.data as Book[]);
+          setBooks(data?.data.books as Book[]);
         } else {
           console.error("Error fetching books:", response.statusText);
           throw new Error("Error al cargar los libros favoritos");

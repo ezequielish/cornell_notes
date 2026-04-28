@@ -1,5 +1,6 @@
 // routes.config.js
 export const ROUTES = [
+  { path: "/", label: "Home", emoji: "🏠" },
   { path: "/mylibrary", label: "Mis Libros", emoji: "📚" },
   { path: "/favorites", label: "Mis Favoritos", emoji: "❤️" },
 ];

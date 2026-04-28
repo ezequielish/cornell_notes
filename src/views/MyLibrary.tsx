@@ -11,7 +11,21 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 interface Response {
   success: boolean;
-  data: Book | Book[];
+  data: {
+    books: Book[];
+    stats: {
+      totalBooks: number;
+      completedBooks: number;
+      totalPagesRead: number;
+    };
+  };
+  message?: string;
+  errors?: object[] | "";
+}
+
+interface ResponseBook {
+  success: boolean;
+  data: Book;
   message?: string;
   errors?: object[] | "";
 }
@@ -47,7 +61,7 @@ const MyLibrary = () => {
         body: JSON.stringify(body),
       });
 
-      const data: Response = await response.json();
+      const data: ResponseBook = await response.json();
 
       if (!data.success) {
         const _error: any =
@@ -114,7 +128,7 @@ const MyLibrary = () => {
 
             throw new Error(JSON.stringify(_error));
           }
-          setBooks(data?.data as Book[]);
+          setBooks(data?.data.books as Book[]);
         }
       } catch (error) {
         console.error("Error fetching books:", error);
